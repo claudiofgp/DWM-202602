@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flor & Vida | Arreglos Florales</title>
+<style>
+  :root{
+    --verde-900:#3c5340;
+    --verde-800:#4f6b52;
+    --verde-700:#5f7d5f;
+    --verde-100:#e8efe4;
+    --verde-50:#f4f7f1;
+    --rosa-500:#e0949a;
+    --rosa-600:#c96e77;
+    --rosa-100:#f7e3e5;
+    --crema:#f7f3ec;
+    --papel:#ffffff;
+    --tinta:#2c2a26;
+    --tinta-suave:#6b675f;
+    --borde:#e1dbcb;
+    --ok:#3f7a4e;
+    --ok-bg:#e3f1e6;
+    --warn:#b9700f;
+    --warn-bg:#fbedd8;
+    --danger:#b5433c;
+    --danger-bg:#fbe6e4;
+    --radio:10px;
+    --sombra:0 2px 10px rgba(45,40,30,.08);
+    font-family:"Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--crema);color:var(--tinta);}
+  body{min-height:100vh;line-height:1.5;}
+  h1,h2,h3{font-family:Georgia, "Times New Roman", serif;font-weight:700;margin:0 0 .4em;color:var(--verde-900);}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input[type=text],input[type=email],input[type=tel]{
+    font-family:inherit;font-size:.95rem;padding:.65rem .8rem;border:1px solid var(--borde);
+    border-radius:8px;width:100%;background:#fffdf9;transition:border-color .15s;
+  }
+  input:focus{outline:none;border-color:var(--verde-700);box-shadow:0 0 0 3px var(--verde-100);}
+  input.campo-invalido{border-color:var(--danger);}
+  label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.3rem;color:var(--tinta);}
+  .oculto{display:none !important;}
+
+  /* Barra de demostración (routing entre "roles" del sistema) */
+  .demo-bar{
+    background:var(--verde-900);color:#f1efe6;padding:.5rem 1.2rem;
+    display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;font-size:.8rem;
+  }
+  .demo-bar span{opacity:.75;}
+  .demo-bar button{
+    background:rgba(255,255,255,.1);color:#fff;padding:.35rem .8rem;border-radius:999px;
+    font-size:.78rem;transition:background .15s;
+  }
+  .demo-bar button:hover{background:rgba(255,255,255,.22);}
+  .demo-bar button.activo{background:var(--rosa-500);color:#2c2a26;font-weight:600;}
+
+  /* Header sitio */
+  header.site{
+    background:var(--verde-800);color:#fff;padding:1rem 1.5rem;
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  }
+  header.site .marca{font-family:Georgia, serif;font-size:1.5rem;font-weight:700;color:#fff;}
+  .buscador{
+    flex:1;min-width:220px;max-width:480px;display:flex;align-items:center;gap:.5rem;
+    background:#fff;border-radius:999px;padding:.55rem 1rem;color:var(--tinta-suave);
+  }
+  .buscador input{border:none;padding:0;flex:1;background:transparent;font-size:.9rem;}
+  .buscador input:focus{box-shadow:none;}
+  .acciones-header{display:flex;gap:.6rem;align-items:center;}
+  .btn-carrito{
+    background:var(--rosa-500);color:#fff;padding:.55rem 1.1rem;border-radius:8px;font-weight:600;
+    display:flex;align-items:center;gap:.4rem;font-size:.9rem;
+  }
+  .btn-carrito:hover{background:var(--rosa-600);}
+  .btn-sesion{
+    background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6) !important;
+    padding:.55rem 1.1rem;border-radius:8px;font-weight:600;font-size:.9rem;
+  }
+  nav.principal{
+    background:#fffdf9;border-bottom:1px solid var(--borde);padding:0 1.5rem;
+    display:flex;gap:1.6rem;overflow-x:auto;
+  }
+  nav.principal button{
+    background:none;padding:.9rem 0;font-size:.92rem;color:var(--tinta);font-weight:600;
+    border-bottom:3px solid transparent;white-space:nowrap;
+  }
+  nav.principal button.activa{color:var(--verde-800);border-bottom-color:var(--verde-800);}
+  nav.principal button.oferta{color:var(--rosa-600);}
+  nav.principal button.oferta.activa{border-bottom-color:var(--rosa-600);}
+
+  main{max-width:1180px;margin:0 auto;padding:1.6rem 1.5rem 4rem;}
+
+  /* Hero catálogo */
+  .hero{
+    background:var(--verde-50);border:1px solid var(--verde-100);border-radius:14px;
+    padding:2.2rem 2rem;margin-bottom:2rem;
+  }
+  .hero h1{font-size:1.9rem;max-width:34ch;}
+  .hero p{color:var(--tinta-suave);max-width:52ch;margin:0 0 1.1rem;}
+  .btn-primario{
+    background:var(--rosa-500);color:#fff;padding:.75rem 1.4rem;border-radius:8px;font-weight:600;font-size:.95rem;
+  }
+  .btn-primario:hover{background:var(--rosa-600);}
+  .btn-secundario{
+    background:#fff;border:1px solid var(--verde-800) !important;color:var(--verde-800);
+    padding:.75rem 1.4rem;border-radius:8px;font-weight:600;font-size:.95rem;
+  }
+  .btn-secundario:hover{background:var(--verde-50);}
+
+  .rejilla-productos{
+    display:grid;grid-template-columns:repeat(auto-fill, minmax(230px,1fr));gap:1.4rem;
+  }
+  .tarjeta-producto{
+    background:var(--papel);border:1px solid var(--borde);border-radius:var(--radio);overflow:hidden;
+    box-shadow:var(--sombra);display:flex;flex-direction:column;
+  }
+  .imagen-producto{
+    aspect-ratio:1/1;background:var(--verde-50);display:flex;align-items:center;justify-content:center;
+    color:var(--tinta-suave);font-size:.85rem;border-bottom:1px solid var(--borde);position:relative;
+  }
+  .etiqueta-oferta{
+    position:absolute;top:.6rem;left:.6rem;background:var(--rosa-600);color:#fff;
+    font-size:.7rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;
+  }
+  .info-producto{padding:1rem 1.1rem 1.2rem;display:flex;flex-direction:column;gap:.5rem;flex:1;}
+  .info-producto h3{font-size:1rem;font-family:inherit;color:var(--tinta);}
+  .precio{color:var(--verde-800);font-weight:700;font-size:1.15rem;}
+  .btn-añadir{
+    margin-top:auto;background:var(--rosa-500);color:#fff;padding:.65rem;border-radius:8px;
+    font-weight:600;font-size:.9rem;
+  }
+  .btn-añadir:hover{background:var(--rosa-600);}
+  .sin-resultados{color:var(--tinta-suave);padding:2rem 0;text-align:center;}
+
+  /* Toast */
+  #toast{
+    position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--verde-900);color:#fff;padding:.75rem 1.3rem;border-radius:8px;font-size:.9rem;
+    box-shadow:0 6px 20px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:all .25s;z-index:60;
+  }
+  #toast.mostrar{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* Carrito */
+  .panel{background:var(--papel);border:1px solid var(--borde);border-radius:var(--radio);padding:1.6rem;box-shadow:var(--sombra);}
+  .fila-carrito{
+    display:flex;align-items:center;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--borde);
+  }
+  .fila-carrito:last-child{border-bottom:none;}
+  .miniatura{
+    width:56px;height:56px;border-radius:8px;background:var(--verde-50);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  }
+  .fila-carrito .detalle{flex:1;min-width:120px;}
+  .fila-carrito .detalle strong{display:block;font-size:.92rem;}
+  .fila-carrito .detalle span{color:var(--tinta-suave);font-size:.82rem;}
+  .control-cantidad{display:flex;align-items:center;gap:.5rem;}
+  .control-cantidad button{
+    width:28px;height:28px;border-radius:6px;background:var(--verde-100);color:var(--verde-900);font-weight:700;
+  }
+  .control-cantidad button:hover{background:var(--verde-800);color:#fff;}
+  .quitar-item{color:var(--danger);font-size:.8rem;font-weight:600;background:none;}
+  .resumen-total{display:flex;justify-content:space-between;padding-top:1rem;margin-top:.5rem;border-top:2px solid var(--tinta);font-weight:700;font-size:1.05rem;}
+  .carrito-vacio{text-align:center;padding:3rem 1rem;color:var(--tinta-suave);}
+
+  /* Checkout */
+  .grid-checkout{display:grid;grid-template-columns:1fr 1.3fr;gap:1.6rem;align-items:start;}
+  @media (max-width:820px){.grid-checkout{grid-template-columns:1fr;}}
+  .resumen-linea{display:flex;justify-content:space-between;padding:.5rem 0;font-size:.92rem;}
+  .resumen-linea.total{border-top:1px solid var(--borde);margin-top:.5rem;padding-top:.9rem;font-weight:700;font-size:1.1rem;color:var(--verde-900);}
+  .fila-formulario{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+  @media (max-width:560px){.fila-formulario{grid-template-columns:1fr;}}
+  .error-campo{color:var(--danger);font-size:.78rem;margin-top:.3rem;display:none;}
+  .campo-invalido + .error-campo{display:block;}
+  .opciones-pago{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:.4rem 0 1.4rem;}
+  @media (max-width:560px){.opciones-pago{grid-template-columns:1fr;}}
+  .opcion-pago{
+    border:1.5px solid var(--borde);border-radius:10px;padding:.9rem 1rem;display:flex;gap:.6rem;
+    align-items:center;cursor:pointer;font-weight:600;font-size:.92rem;background:#fffdf9;
+  }
+  .opcion-pago.seleccionada{border-color:var(--verde-800);background:var(--verde-50);}
+  .opcion-pago input{width:auto;accent-color:var(--verde-800);}
+  .btn-confirmar{width:100%;background:var(--rosa-500);color:#fff;padding:.9rem;border-radius:8px;font-weight:700;font-size:1rem;}
+  .btn-confirmar:hover{background:var(--rosa-600);}
+
+  .pantalla-exito{text-align:center;padding:3rem 1rem;}
+  .pantalla-exito .icono{font-size:3rem;margin-bottom:.6rem;}
+
+  /* Tablas / paneles internos */
+  .encabezado-panel{
+    background:var(--verde-900);color:#fff;padding:1.1rem 1.5rem;border-radius:var(--radio) var(--radio) 0 0;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;
+  }
+  .encabezado-panel h1{color:#fff;font-size:1.25rem;margin:0;}
+  .cuerpo-panel{background:var(--papel);border:1px solid var(--borde);border-top:none;border-radius:0 0 var(--radio) var(--radio);padding:1.6rem;box-shadow:var(--sombra);}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;}
+  th{text-align:left;background:var(--verde-800);color:#fff;padding:.7rem .8rem;font-size:.8rem;text-transform:none;}
+  th:first-child{border-radius:8px 0 0 8px;}
+  th:last-child{border-radius:0 8px 8px 0;}
+  td{padding:.8rem;border-bottom:1px solid var(--borde);vertical-align:middle;}
+  .envoltura-tabla{overflow-x:auto;}
+  .id-pedido{color:var(--verde-800);font-weight:700;}
+  .badge{padding:.3rem .75rem;border-radius:999px;font-size:.78rem;font-weight:700;display:inline-block;}
+  .badge.aprobado{background:var(--ok-bg);color:var(--ok);}
+  .badge.pendiente{background:var(--warn-bg);color:var(--warn);}
+  .badge.anulado{background:var(--danger-bg);color:var(--danger);}
+  .btn-accion{padding:.5rem .9rem;border-radius:7px;font-size:.8rem;font-weight:700;color:#fff;margin-right:.4rem;margin-bottom:.3rem;}
+  .btn-validar{background:var(--ok);} .btn-validar:hover{opacity:.88;}
+  .btn-anular{background:var(--danger);} .btn-anular:hover{opacity:.88;}
+  .btn-boleta{background:var(--rosa-500);} .btn-boleta:hover{background:var(--rosa-600);}
+  .btn-boleta:disabled{background:var(--rosa-100);color:var(--rosa-600);cursor:default;}
+  .texto-cajero{color:var(--tinta-suave);}
+
+  .orden-armado{
+    border:1.5px solid var(--verde-800);border-radius:12px;padding:1.3rem 1.5rem;margin-bottom:1.2rem;background:var(--verde-50);
+  }
+  .orden-armado h3{margin:0 0 .2rem;font-size:1.05rem;}
+  .orden-armado .cliente-orden{color:var(--tinta-suave);font-size:.85rem;margin-bottom:.8rem;}
+  .orden-armado .titulo-seccion{font-weight:700;color:var(--verde-900);font-size:.85rem;margin-bottom:.3rem;}
+  .orden-armado .insumos{color:var(--tinta);font-size:.9rem;margin-bottom:.9rem;}
+  .orden-armado .direccion-despacho{font-size:.88rem;margin-bottom:1rem;}
+  .cobertura-ok{color:var(--ok);font-weight:600;}
+  .btn-imprimir{background:var(--verde-800);color:#fff;}
+  .btn-imprimir:hover{background:var(--verde-900);}
+  .btn-repartidor{background:var(--rosa-500);color:#fff;}
+  .btn-repartidor:hover{background:var(--rosa-600);}
+  .orden-despachada{opacity:.55;}
+
+  .vacio-panel{text-align:center;padding:2.5rem;color:var(--tinta-suave);}
+
+  footer.site{padding:2rem 1.5rem;text-align:center;color:var(--tinta-suave);font-size:.82rem;}
+
+  @media print{
+    .demo-bar, header.site, nav.principal, footer.site, .btn-accion, .btn-imprimir, .btn-repartidor{display:none !important;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-bar">
+  <span>Modo demostración — cambiar vista del sistema:</span>
+  <button data-ruta="inicio" onclick="navegar('inicio')">Cliente (Catálogo)</button>
+  <button data-ruta="caja" onclick="navegar('caja')">Cajero Virtual</button>
+  <button data-ruta="taller" onclick="navegar('taller')">Taller y Despacho</button>
+</div>
+
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+/* =======================================================
+   FLOR & VIDA — Taller 1: Frontend (HTML+CSS+JS, un archivo)
+   Enrutamiento por hash, estado en memoria, validaciones DOM.
+   ======================================================= */
+
+/* ---------- Datos iniciales ---------- */
+const productos = [
+  {id:1, nombre:"Ramo 12 Rosas Rojas Premium", precio:24990, categoria:"rosas", oferta:false, icono:"🌹"},
+  {id:2, nombre:"Centro de Mesa Decorativo",   precio:35000, categoria:"especiales", oferta:false, icono:"💐"},
+  {id:3, nombre:"Caja Corazón Rosas y Tulipanes", precio:29990, categoria:"especiales", oferta:true,  icono:"🎁"},
+  {id:4, nombre:"Ramo 24 Rosas Rosadas",       precio:32990, categoria:"rosas", oferta:false, icono:"🌸"},
+  {id:5, nombre:"Arreglo de Girasoles Silvestres", precio:21990, categoria:"eventos", oferta:true, icono:"🌻"},
+  {id:6, nombre:"Decoración Floral para Eventos",  precio:89990, categoria:"eventos", oferta:false, icono:"🏵️"},
+];
+
+const categorias = [
+  {clave:"todos",      etiqueta:"Inicio"},
+  {clave:"rosas",      etiqueta:"Ramos de Rosas"},
+  {clave:"especiales", etiqueta:"Arreglos Especiales"},
+  {clave:"eventos",    etiqueta:"Decoración de Eventos"},
+  {clave:"oferta",     etiqueta:"Ofertas del Mes", oferta:true},
+];
+
+const estado = {
+  carrito: {},        // {productoId: cantidad}
+  filtro: "todos",
+  busqueda: "",
+  siguienteIdPedido: 1044,
+  pedidos: [
+    {id:1042, cliente:"Claudio González", rut:"19.876.543-2", direccion:"Av. Providencia 1234, Comuna Providencia",
+     email:"claudio@example.com", telefono:"+56 9 1234 5678", medioPago:"Webpay / Tarjetas",
+     monto:24990, estado:"Aprobado", items:[{nombre:"Ramo 12 Rosas Rojas Premium", cantidad:1, categoria:"rosas"}],
+     despachada:false, chofer:null, boletaEnviada:false},
+    {id:1043, cliente:"María López", rut:"17.234.567-8", direccion:"Los Aromos 456, Depto 12B, Ñuñoa",
+     email:"maria.lopez@example.com", telefono:"+56 9 8765 4321", medioPago:"Servipag / Depósito",
+     monto:35000, estado:"Pendiente", items:[{nombre:"Centro de Mesa Decorativo", cantidad:1, categoria:"especiales"}],
+     despachada:false, chofer:null, boletaEnviada:false},
+  ],
+};
+
+/* ---------- Utilidades ---------- */
+function formatoCLP(valor){
+  return "$" + valor.toLocaleString("es-CL");
+}
+function totalCarrito(){
+  return Object.entries(estado.carrito).reduce((acc,[id,cant])=>{
+    const p = productos.find(pr=>pr.id===Number(id));
+    return acc + (p ? p.precio*cant : 0);
+  },0);
+}
+function cantidadCarrito(){
+  return Object.values(estado.carrito).reduce((a,b)=>a+b,0);
+}
+function mostrarToast(mensaje){
+  const t = document.getElementById("toast");
+  t.textContent = mensaje;
+  t.classList.add("mostrar");
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove("mostrar"), 2200);
+}
+function navegar(ruta){ window.location.hash = "#/" + ruta; }
+
+/* ---------- Validación de RUT chileno ---------- */
+function limpiarRut(rut){
+  return rut.replace(/[^0-9kK]/g,"").toUpperCase();
+}
+function validarRut(rutSucio){
+  const rut = limpiarRut(rutSucio);
+  if(rut.length < 2) return false;
+  const cuerpo = rut.slice(0,-1);
+  const dv = rut.slice(-1);
+  if(!/^\d+$/.test(cuerpo)) return false;
+  let suma = 0, multiplo = 2;
+  for(let i = cuerpo.length-1; i>=0; i--){
+    suma += Number(cuerpo[i]) * multiplo;
+    multiplo = multiplo === 7 ? 2 : multiplo+1;
+  }
+  const resto = 11 - (suma % 11);
+  const dvEsperado = resto===11 ? "0" : resto===10 ? "K" : String(resto);
+  return dv === dvEsperado;
+}
+function formatearRutVisual(rutSucio){
+  const rut = limpiarRut(rutSucio);
+  if(rut.length<2) return rutSucio;
+  const cuerpo = rut.slice(0,-1), dv = rut.slice(-1);
+  return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g,".") + "-" + dv;
+}
+
+/* ---------- Router ---------- */
+window.addEventListener("hashchange", render);
+window.addEventListener("DOMContentLoaded", render);
+
+function rutaActual(){
+  const h = window.location.hash.replace(/^#\/?/, "");
+  return h.split("?")[0] || "inicio";
+}
+
+function render(){
+  const ruta = rutaActual();
+  const app = document.getElementById("app");
+
+  document.querySelectorAll(".demo-bar button").forEach(b=>{
+    b.classList.toggle("activo",
+      (b.dataset.ruta==="inicio" && ["inicio","carrito","checkout","exito"].includes(ruta)) ||
+      b.dataset.ruta===ruta
+    );
+  });
+
+  switch(ruta){
+    case "carrito":  app.innerHTML = vistaCarrito(); break;
+    case "checkout": app.innerHTML = vistaCheckout(); adjuntarEventosCheckout(); break;
+    case "exito":    app.innerHTML = vistaExito(); break;
+    case "caja":     app.innerHTML = vistaCaja(); break;
+    case "taller":   app.innerHTML = vistaTaller(); break;
+    default:         app.innerHTML = vistaCatalogo();
+  }
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+/* ---------- Vista: Catálogo / Inicio ---------- */
+function vistaCatalogo(){
+  const filtrados = productos.filter(p=>{
+    const coincideCategoria = estado.filtro==="todos" ? true
+      : estado.filtro==="oferta" ? p.oferta
+      : p.categoria===estado.filtro;
+    const coincideBusqueda = p.nombre.toLowerCase().includes(estado.busqueda.toLowerCase());
+    return coincideCategoria && coincideBusqueda;
+  });
+
+  return `
+    <header class="site">
+      <a class="marca" href="#/inicio">Flor &amp; Vida</a>
+      <div class="buscador">
+        <span>🔍</span>
+        <input type="text" placeholder="Buscar arreglos florales, ramos..." value="${escapeHtml(estado.busqueda)}"
+          oninput="estado.busqueda=this.value; renderSoloProductos();">
+      </div>
+      <div class="acciones-header">
+        <button class="btn-carrito" onclick="navegar('carrito')">🛒 Carrito (${cantidadCarrito()})</button>
+        <button class="btn-sesion">Iniciar Sesión</button>
+      </div>
+    </header>
+    <nav class="principal">
+      ${categorias.map(c=>`
+        <button class="${c.clave===estado.filtro?'activa':''} ${c.oferta?'oferta':''}"
+          onclick="estado.filtro='${c.clave}'; render();">${c.etiqueta}</button>
+      `).join("")}
+    </nav>
+    <main>
+      <section class="hero">
+        <h1>Arreglos Florales Frescos para Cada Ocasión</h1>
+        <p>Despacho a domicilio garantizado dentro del radio urbano en menos de 3 horas.</p>
+        <button class="btn-primario" onclick="estado.filtro='oferta'; render();">Ver Promociones</button>
+      </section>
+      <h2>Catálogo Destacado</h2>
+      <div id="rejilla-productos" class="rejilla-productos">
+        ${filtrados.length ? filtrados.map(tarjetaProducto).join("") : '<p class="sin-resultados">No encontramos arreglos que coincidan con tu búsqueda.</p>'}
+      </div>
+    </main>
+    <footer class="site">Flor &amp; Vida · Proyecto Taller 1 · PTEC103 Desarrollo Web y Móvil</footer>
+  `;
+}
+function tarjetaProducto(p){
+  return `
+    <article class="tarjeta-producto">
+      <div class="imagen-producto">
+        ${p.oferta ? '<span class="etiqueta-oferta">Oferta</span>' : ""}
+        <span style="font-size:2.4rem">${p.icono}</span>
+      </div>
+      <div class="info-producto">
+        <h3>${p.nombre}</h3>
+        <span class="precio">${formatoCLP(p.precio)}</span>
+        <button class="btn-añadir" onclick="agregarAlCarrito(${p.id})">Añadir al Carrito</button>
+      </div>
+    </article>
+  `;
+}
+function renderSoloProductos(){
+  const filtrados = productos.filter(p=>{
+    const coincideCategoria = estado.filtro==="todos" ? true
+      : estado.filtro==="oferta" ? p.oferta
+      : p.categoria===estado.filtro;
+    return p.nombre.toLowerCase().includes(estado.busqueda.toLowerCase()) && coincideCategoria;
+  });
+  const rejilla = document.getElementById("rejilla-productos");
+  if(rejilla){
+    rejilla.innerHTML = filtrados.length ? filtrados.map(tarjetaProducto).join("")
+      : '<p class="sin-resultados">No encontramos arreglos que coincidan con tu búsqueda.</p>';
+  }
+}
+function agregarAlCarrito(id){
+  estado.carrito[id] = (estado.carrito[id] || 0) + 1;
+  const p = productos.find(pr=>pr.id===id);
+  mostrarToast(`${p.nombre} añadido al carrito`);
+  const btnCarrito = document.querySelector(".btn-carrito");
+  if(btnCarrito) btnCarrito.textContent = `🛒 Carrito (${cantidadCarrito()})`;
+}
+
+/* ---------- Vista: Carrito ---------- */
+function vistaCarrito(){
+  const items = Object.entries(estado.carrito);
+  return `
+    <header class="site">
+      <a class="marca" href="#/inicio">Flor &amp; Vida</a>
+      <div class="acciones-header">
+        <button class="btn-sesion" onclick="navegar('inicio')">← Volver al Catálogo</button>
+      </div>
+    </header>
+    <main>
+      <h1>Tu Carrito</h1>
+      <div class="panel" style="max-width:640px;margin:0 auto;">
+        ${ items.length ? `
+          ${items.map(([id,cant])=>{
+            const p = productos.find(pr=>pr.id===Number(id));
+            return `
+              <div class="fila-carrito">
+                <div class="miniatura">${p.icono}</div>
+                <div class="detalle">
+                  <strong>${p.nombre}</strong>
+                  <span>${formatoCLP(p.precio)} c/u</span>
+                </div>
+                <div class="control-cantidad">
+                  <button onclick="cambiarCantidad(${p.id},-1)">−</button>
+                  <span>${cant}</span>
+                  <button onclick="cambiarCantidad(${p.id},1)">+</button>
+                </div>
+                <strong>${formatoCLP(p.precio*cant)}</strong>
+                <button class="quitar-item" onclick="quitarDelCarrito(${p.id})">Quitar</button>
+              </div>`;
+          }).join("")}
+          <div class="resumen-total"><span>Total</span><span>${formatoCLP(totalCarrito())}</span></div>
+          <button class="btn-primario" style="width:100%;margin-top:1.4rem;" onclick="navegar('checkout')">Proceder al Pago</button>
+        ` : `
+          <div class="carrito-vacio">
+            <p>Tu carrito está vacío.</p>
+            <button class="btn-secundario" onclick="navegar('inicio')">Ver catálogo</button>
+          </div>
+        `}
+      </div>
+    </main>
+  `;
+}
+function cambiarCantidad(id, delta){
+  estado.carrito[id] = (estado.carrito[id]||0) + delta;
+  if(estado.carrito[id] <= 0) delete estado.carrito[id];
+  render();
+}
+function quitarDelCarrito(id){
+  delete estado.carrito[id];
+  render();
+}
+
+/* ---------- Vista: Checkout ---------- */
+function vistaCheckout(){
+  if(cantidadCarrito()===0){
+    return `
+      <header class="site"><a class="marca" href="#/inicio">Flor &amp; Vida</a></header>
+      <main><div class="panel" style="max-width:520px;margin:0 auto;text-align:center;">
+        <p>No tienes productos en el carrito.</p>
+        <button class="btn-primario" onclick="navegar('inicio')">Ir al catálogo</button>
+      </div></main>`;
+  }
+  const items = Object.entries(estado.carrito).map(([id,cant])=>{
+    const p = productos.find(pr=>pr.id===Number(id));
+    return {...p, cantidad:cant};
+  });
+  const total = totalCarrito();
+  return `
+    <header class="site">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="marca">Flor &amp; Vida</span>
+        <span style="opacity:.85;font-size:.95rem;">— Proceso de Pago</span>
+      </div>
+      <button class="btn-sesion" onclick="navegar('carrito')">← Volver al Carrito</button>
+    </header>
+    <main>
+      <div class="grid-checkout">
+        <div class="panel">
+          <h2>Resumen de tu Pedido</h2>
+          ${items.map(it=>`
+            <div class="resumen-linea"><span>${it.cantidad}x ${it.nombre}</span><span>${formatoCLP(it.precio*it.cantidad)}</span></div>
+          `).join("")}
+          <div class="resumen-linea"><span>Despacho a Domicilio (Radio 3km)</span><span style="color:var(--ok);font-weight:700;">GRATIS</span></div>
+          <div class="resumen-linea total"><span>Total a Pagar</span><span>${formatoCLP(total)}</span></div>
+        </div>
+
+        <div class="panel">
+          <h2>Datos de Registro y Despacho</h2>
+          <form id="form-checkout" novalidate>
+            <div class="fila-formulario">
+              <div>
+                <label for="rut">RUT / RUN</label>
+                <input type="text" id="rut" placeholder="12.345.678-9" autocomplete="off">
+                <span class="error-campo">Ingresa un RUT válido (ej: 12.345.678-9).</span>
+              </div>
+              <div>
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" placeholder="Nombre y apellido" autocomplete="name">
+                <span class="error-campo">Ingresa tu nombre completo.</span>
+              </div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label for="direccion">Dirección de Entrega</label>
+              <input type="text" id="direccion" placeholder="Calle, número, comuna" autocomplete="street-address">
+              <span class="error-campo">Ingresa la dirección de entrega.</span>
+            </div>
+            <div class="fila-formulario">
+              <div>
+                <label for="correo">Correo Electrónico (para envío de boleta)</label>
+                <input type="email" id="correo" placeholder="correo@ejemplo.com" autocomplete="email">
+                <span class="error-campo">Ingresa un correo válido.</span>
+              </div>
+              <div>
+                <label for="telefono">Teléfono de Contacto</label>
+                <input type="tel" id="telefono" placeholder="+56 9 1234 5678" autocomplete="tel">
+                <span class="error-campo">Ingresa un teléfono válido (8 a 9 dígitos).</span>
+              </div>
+            </div>
+
+            <label>Selecciona Medio de Pago Externo</label>
+            <div class="opciones-pago">
+              <label class="opcion-pago seleccionada" id="opcion-webpay">
+                <input type="radio" name="medioPago" value="Webpay / Tarjetas" checked onchange="marcarOpcionPago(this)">
+                Webpay / Tarjetas
+              </label>
+              <label class="opcion-pago" id="opcion-servipag">
+                <input type="radio" name="medioPago" value="Servipag / Depósito" onchange="marcarOpcionPago(this)">
+                Servipag / Depósito
+              </label>
+            </div>
+
+            <button type="submit" class="btn-confirmar">Confirmar y Pagar</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  `;
+}
+function marcarOpcionPago(input){
+  document.querySelectorAll(".opcion-pago").forEach(o=>o.classList.remove("seleccionada"));
+  input.closest(".opcion-pago").classList.add("seleccionada");
+}
+function adjuntarEventosCheckout(){
+  const form = document.getElementById("form-checkout");
+  if(!form) return;
+
+  const rut = document.getElementById("rut");
+  rut.addEventListener("blur", ()=>{ if(rut.value.trim()) rut.value = formatearRutVisual(rut.value); });
+
+  form.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    let valido = true;
+    let primerInvalido = null;
+
+    function marcar(input, condicion){
+      if(!condicion){
+        input.classList.add("campo-invalido");
+        if(!primerInvalido) primerInvalido = input;
+        valido = false;
+      } else {
+        input.classList.remove("campo-invalido");
+      }
+    }
+
+    const nombre = document.getElementById("nombre");
+    const direccion = document.getElementById("direccion");
+    const correo = document.getElementById("correo");
+    const telefono = document.getElementById("telefono");
+    const medioPago = form.querySelector('input[name="medioPago"]:checked');
+
+    marcar(rut, rut.value.trim() && validarRut(rut.value));
+    marcar(nombre, nombre.value.trim().length >= 3);
+    marcar(direccion, direccion.value.trim().length >= 5);
+    marcar(correo, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.value.trim()));
+    marcar(telefono, /^[+\d\s]{8,15}$/.test(telefono.value.trim()) && telefono.value.replace(/\D/g,"").length>=8);
+
+    if(!valido){
+      if(primerInvalido) primerInvalido.focus();
+      mostrarToast("Revisa los campos marcados en rojo");
+      return;
+    }
+
+    const nuevoPedido = {
+      id: estado.siguienteIdPedido++,
+      cliente: nombre.value.trim(),
+      rut: rut.value.trim(),
+      direccion: direccion.value.trim(),
+      email: correo.value.trim(),
+      telefono: telefono.value.trim(),
+      medioPago: medioPago.value,
+      monto: totalCarrito(),
+      estado: medioPago.value.startsWith("Webpay") ? "Aprobado" : "Pendiente",
+      items: Object.entries(estado.carrito).map(([id,cant])=>{
+        const p = productos.find(pr=>pr.id===Number(id));
+        return {nombre:p.nombre, cantidad:cant, categoria:p.categoria};
+      }),
+      despachada:false, chofer:null, boletaEnviada:false,
+    };
+    estado.pedidos.unshift(nuevoPedido);
+    estado.carrito = {};
+    window._ultimoPedido = nuevoPedido.id;
+    navegar("exito");
+  });
+}
+
+/* ---------- Vista: Confirmación ---------- */
+function vistaExito(){
+  const pedido = estado.pedidos.find(p=>p.id===window._ultimoPedido);
+  if(!pedido){
+    return `<main><div class="panel" style="max-width:480px;margin:2rem auto;text-align:center;">
+      <p>No hay una confirmación reciente para mostrar.</p>
+      <button class="btn-primario" onclick="navegar('inicio')">Volver al catálogo</button>
+    </div></main>`;
+  }
+  return `
+    <header class="site"><a class="marca" href="#/inicio">Flor &amp; Vida</a></header>
+    <main>
+      <div class="panel pantalla-exito" style="max-width:520px;margin:0 auto;">
+        <div class="icono">✅</div>
+        <h1>¡Pedido Confirmado!</h1>
+        <p>Tu pedido <strong>#${pedido.id}</strong> quedó registrado por ${formatoCLP(pedido.monto)}.</p>
+        <p class="texto-cajero">Estado del pago: <span class="badge ${pedido.estado==='Aprobado'?'aprobado':'pendiente'}">${pedido.estado}</span></p>
+        <button class="btn-primario" onclick="navegar('inicio')">Volver al Catálogo</button>
+      </div>
+    </main>
+  `;
+}
+
+/* ---------- Vista: Panel de Cajero Virtual ---------- */
+function vistaCaja(){
+  return `
+    <main style="padding-top:1.6rem;">
+      <div class="encabezado-panel">
+        <h1>Flor &amp; Vida - Panel de Cajero Virtual</h1>
+        <span>Cajero: Pedro Morales</span>
+      </div>
+      <div class="cuerpo-panel">
+        <h2 style="font-size:1.05rem;">Gestión de Ventas Online y Boletas Electrónicas</h2>
+        <div class="envoltura-tabla">
+          <table>
+            <thead>
+              <tr><th>ID Pedido</th><th>Cliente</th><th>Monto</th><th>Estado Pago</th><th>Acciones de Caja</th></tr>
+            </thead>
+            <tbody>
+              ${estado.pedidos.length ? estado.pedidos.map(filaCaja).join("") : `
+                <tr><td colspan="5" class="vacio-panel">No hay pedidos registrados todavía.</td></tr>
+              `}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  `;
+}
+function filaCaja(p){
+  let acciones = "";
+  let badgeClase = "pendiente";
+  if(p.estado === "Aprobado"){
+    badgeClase = "aprobado";
+    acciones = `<button class="btn-accion btn-boleta" ${p.boletaEnviada?"disabled":""} onclick="emitirBoleta(${p.id})">
+      ${p.boletaEnviada ? "Boleta Enviada ✓" : "Emitir Boleta Email"}</button>`;
+  } else if(p.estado === "Pendiente"){
+    badgeClase = "pendiente";
+    acciones = `
+      <button class="btn-accion btn-validar" onclick="validarPago(${p.id})">Validar Pago</button>
+      <button class="btn-accion btn-anular" onclick="anularCompra(${p.id})">Anular Compra</button>`;
+  } else {
+    badgeClase = "anulado";
+    acciones = `<span class="texto-cajero">Compra anulada</span>`;
+  }
+  return `
+    <tr>
+      <td class="id-pedido">#${p.id}</td>
+      <td>${p.cliente}</td>
+      <td>${formatoCLP(p.monto)}</td>
+      <td><span class="badge ${badgeClase}">${p.estado}</span></td>
+      <td>${acciones}</td>
+    </tr>
+  `;
+}
+function validarPago(id){
+  const pedido = estado.pedidos.find(p=>p.id===id);
+  if(pedido){ pedido.estado = "Aprobado"; mostrarToast(`Pago del pedido #${id} validado`); }
+  render();
+}
+function anularCompra(id){
+  const pedido = estado.pedidos.find(p=>p.id===id);
+  if(pedido){ pedido.estado = "Anulado"; mostrarToast(`Pedido #${id} anulado`); }
+  render();
+}
+function emitirBoleta(id){
+  const pedido = estado.pedidos.find(p=>p.id===id);
+  if(pedido && !pedido.boletaEnviada){
+    pedido.boletaEnviada = true;
+    mostrarToast(`Boleta enviada a ${pedido.email}`);
+  }
+  render();
+}
+
+/* ---------- Vista: Módulo de Taller y Despacho ---------- */
+function vistaTaller(){
+  const pendientes = estado.pedidos.filter(p=>p.estado==="Aprobado" && !p.despachada);
+  const despachadas = estado.pedidos.filter(p=>p.despachada);
+  return `
+    <main style="padding-top:1.6rem;">
+      <div class="encabezado-panel">
+        <h1>Flor &amp; Vida - Módulo de Taller y Despacho</h1>
+      </div>
+      <div class="cuerpo-panel">
+        <h2 style="font-size:1.05rem;">Órdenes de Armado Floral Pendientes</h2>
+        ${pendientes.length ? pendientes.map(ordenArmado).join("") : `
+          <div class="vacio-panel">No hay órdenes pendientes de armado en este momento.</div>
+        `}
+
+        ${despachadas.length ? `
+          <h2 style="font-size:1.05rem;margin-top:2rem;">Órdenes ya Despachadas</h2>
+          ${despachadas.map(p=>`
+            <div class="orden-armado orden-despachada">
+              <h3>ORDEN #${p.id} <span class="badge aprobado" style="margin-left:.5rem;">Despachada</span></h3>
+              <div class="cliente-orden">Cliente: ${p.cliente} · Repartidor: ${p.chofer}</div>
+            </div>
+          `).join("")}
+        ` : ""}
+      </div>
+    </main>
+  `;
+}
+function generarInsumos(items){
+  return items.map(it=>{
+    if(it.categoria==="rosas"){
+      return `${it.cantidad*12} Rosas Frescas · Cinta Satín · Follaje Verde Eucalipto · Capuchón Transparente`;
+    }
+    if(it.categoria==="especiales"){
+      return `Base Floral Decorativa · Follaje Mixto · Papel de Regalo · Tarjeta de Dedicatoria`;
+    }
+    return `Flores de Temporada · Estructura de Montaje · Cinta y Accesorios Decorativos`;
+  }).join(" · ");
+}
+function ordenArmado(p){
+  return `
+    <div class="orden-armado">
+      <h3>ORDEN DE ARMADO #${p.id}</h3>
+      <div class="cliente-orden">Cliente: ${p.cliente}</div>
+      <div class="titulo-seccion">Insumos para Preparación:</div>
+      <div class="insumos">${generarInsumos(p.items)}</div>
+      <div class="direccion-despacho">
+        <span class="titulo-seccion">Dirección de Despacho: </span>
+        ${p.direccion} <span class="cobertura-ok">(Radio Cobertura OK)</span>
+      </div>
+      <button class="btn-accion btn-imprimir" onclick="imprimirFicha(${p.id})">🖨️ Imprimir Ficha Armado</button>
+      <button class="btn-accion btn-repartidor" onclick="asignarRepartidor(${p.id})">🚚 Asignar Repartidor (Chofer 1)</button>
+    </div>
+  `;
+}
+function imprimirFicha(id){
+  window.print();
+}
+function asignarRepartidor(id){
+  const pedido = estado.pedidos.find(p=>p.id===id);
+  if(pedido){
+    pedido.despachada = true;
+    pedido.chofer = "Chofer 1";
+    mostrarToast(`Repartidor asignado a la orden #${id}`);
+  }
+  render();
+}
+
+/* ---------- Utilidad de escape ---------- */
+function escapeHtml(texto){
+  const div = document.createElement("div");
+  div.textContent = texto;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
