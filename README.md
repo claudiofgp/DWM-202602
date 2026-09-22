@@ -31,3 +31,4 @@ El flujo normal de cliente es Catálogo → Carrito → Pago → Confirmación. 
 | Listado/consulta | Catálogo y tabla del Cajero |
 
 ## Enlace de Visualización
+https://claudiofgp.github.io/DWM-202602/
